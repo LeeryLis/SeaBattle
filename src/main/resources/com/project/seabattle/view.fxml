@@ -98,7 +98,17 @@
             <Font name="Segoe Print" size="26.0" />
          </font>
       </Text>
-      <Button fx:id="buttonQuickStart" layoutX="196.0" layoutY="306.0" mnemonicParsing="false" onAction="#quickStart" prefHeight="40.0" prefWidth="250.0" text="Быстрый старт">
+      <Button fx:id="buttonQuickPlacement" layoutX="148.0" layoutY="301.0" mnemonicParsing="false" onAction="#quickPlacement" prefHeight="45.0" prefWidth="346.0" text="Быстрая расстановка">
+         <font>
+            <Font name="Segoe Script Bold" size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="buttonStart" layoutX="508.0" layoutY="301.0" mnemonicParsing="false" onAction="#startGame" prefHeight="45.0" prefWidth="110.0" text="Старт">
+         <font>
+            <Font name="Segoe Script Bold" size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="buttonClear" layoutX="23.0" layoutY="301.0" mnemonicParsing="false" onAction="#clearField" prefHeight="45.0" prefWidth="110.0" text="Убрать">
          <font>
             <Font name="Segoe Script Bold" size="18.0" />
          </font>
