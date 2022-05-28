@@ -73,12 +73,12 @@
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" />
          </rowConstraints>
       </GridPane>
-      <Button fx:id="buttonSize" layoutX="270.0" layoutY="140.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Размер">
+      <Button fx:id="buttonSize" layoutX="270.0" layoutY="140.0" mnemonicParsing="false" onAction="#changeSize" prefHeight="30.0" prefWidth="100.0" text="Размер">
          <font>
             <Font name="Segoe Print" size="14.0" />
          </font>
       </Button>
-      <Button fx:id="buttonRotation" layoutX="270.0" layoutY="233.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Поворот">
+      <Button fx:id="buttonRotation" layoutX="270.0" layoutY="233.0" mnemonicParsing="false" onAction="#changeRotation" prefHeight="30.0" prefWidth="100.0" text="Поворот">
          <font>
             <Font name="Segoe Print" size="14.0" />
          </font>
@@ -113,5 +113,15 @@
             <Font name="Segoe Script Bold" size="18.0" />
          </font>
       </Button>
+      <Button fx:id="buttonRestartGame" layoutX="255.0" layoutY="153.0" mnemonicParsing="false" onAction="#restartGame" prefHeight="45.0" prefWidth="133.0" text="Рестарт">
+         <font>
+            <Font name="Segoe Script Bold" size="18.0" />
+         </font>
+      </Button>
+      <Text fx:id="textWin" layoutX="241.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Победа" textAlignment="CENTER" wrappingWidth="161.0">
+         <font>
+            <Font name="Segoe Print" size="26.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

@@ -55,54 +55,48 @@ public class Field {
         field.put(new Coordinate(x, y), cell);
     }
 
-    public Cell getCell(int x, int y) {
-        return field.get(new Coordinate(x, y));
-    }
-
     public List<Coordinate> allowPlaceCells(int size, boolean isHorisontal) {
         List<Coordinate> result = new ArrayList<>();
 
         for (int y = 0; y < 10; y++) {
             for (int x = 0; x < 10; x++) {
-                boolean isAllow = true;
-
-                for (int i = 0; i < size; i++) {
-                    if (isHorisontal) {
-                        if (!isFreeCell(x + i, y)) {
-                            isAllow = false;
-                            break;
-                        }
-                    }
-                    else {
-                        if (!isFreeCell(x, y + i)) {
-                            isAllow = false;
-                            break;
-                        }
-                    }
-                }
-
-                for (int j = -1; j < 2; j++) {
-                    for (int i = -1; i < size + 1; i++) {
-                        if (isHorisontal) {
-                            if (field.containsKey(new Coordinate(x + i, y + j))) {
-                                isAllow = false;
-                                break;
-                            }
-                        }
-                        else {
-                            if (field.containsKey(new Coordinate(x + j, y + i))) {
-                                isAllow = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (isAllow) result.add(new Coordinate(x, y));
+                if (isAllowPlaceShip(size, isHorisontal, x, y)) result.add(new Coordinate(x, y));
             }
         }
 
         return result;
+    }
+
+    public boolean isAllowPlaceShip(int size, boolean isHorisontal, int x, int y) {
+        for (int i = 0; i < size; i++) {
+            if (isHorisontal) {
+                if (!isFreeCell(x + i, y)) {
+                    return false;
+                }
+            }
+            else {
+                if (!isFreeCell(x, y + i)) {
+                    return false;
+                }
+            }
+        }
+
+        for (int j = -1; j < 2; j++) {
+            for (int i = -1; i < size + 1; i++) {
+                if (isHorisontal) {
+                    if (field.containsKey(new Coordinate(x + i, y + j))) {
+                        return false;
+                    }
+                }
+                else {
+                    if (field.containsKey(new Coordinate(x + j, y + i))) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     public List<Coordinate> allowFireCells() {
@@ -121,7 +115,6 @@ public class Field {
             fillCell(x, y, Cell.SHIPWRECK, true);
             shipwreckCount++;
 
-            System.out.println(isKill(x, y));
             if (isKill(x, y)) fillKilledArea(x, y);
 
             return true;

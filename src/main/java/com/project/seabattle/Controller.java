@@ -6,16 +6,22 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
 public class Controller implements Initializable {
 
     //region FXML variables
+    @FXML
+    private Text textWin;
+
+    @FXML
+    private Button buttonRestartGame;
+
     @FXML
     private Button buttonStart;
 
@@ -55,10 +61,11 @@ public class Controller implements Initializable {
     private Field fieldAI = new Field(fieldAIView);
 
     private final List<Ship> shipList = new ArrayList<>();
+    private int selectedShip = 0;
 
-    private AIController aiController = new AIController(fieldPlayer, fieldPlayerView);
+    private AIController aiController = new AIController(fieldPlayer);
 
-    //region start phase
+
     public void setShipList() {
         shipList.clear();
 
@@ -110,17 +117,18 @@ public class Controller implements Initializable {
         newGame();
 
         gamePhase = 0;
+
+        updateShipPlacementTools();
     }
 
     @FXML
     void quickPlacement() {
-        newGame();
-
         randomShipPlacement(fieldPlayer, fieldPlayerView, true);
 
         gamePhase = 1;
+
+        updateShipPlacementTools();
     }
-    //endregion
 
     @FXML
     void startGame() {
@@ -139,12 +147,12 @@ public class Controller implements Initializable {
             setShipList();
             randomShipPlacement(fieldAI, fieldAIView, false);
 
-            aiController = new AIController(fieldPlayer, fieldPlayerView);
+            aiController = new AIController(fieldPlayer);
         }
     }
 
     private void clickField(int x, int y, boolean isPlayer) {
-        if (gamePhase == 0 && isPlayer) placeShip();
+        if (gamePhase == 0 && isPlayer) placeShip(shipList.get(selectedShip), x, y);
 
         if (gamePhase == 2 && !isPlayer && fieldAI.isAllowFire(x, y)) {
             if (!fieldAI.attackCell(x, y)) {
@@ -159,22 +167,68 @@ public class Controller implements Initializable {
     }
 
     private void endGame(boolean isPlayerWin) {
-        if (isPlayerWin) System.out.println("You win");
-        else System.out.println("You lose");
+        if (isPlayerWin) textWin.setText("Победа");
+        else textWin.setText("Поражение");
         gamePhase = 4;
+
+        pane.getChildren().add(textWin);
+        pane.getChildren().add(buttonRestartGame);
     }
 
-    private void placeShip() {
+    private void placeShip(Ship ship, int x, int y) {
+        if (ship.count > 0 && fieldPlayer.isAllowPlaceShip(ship.size, ship.isHorisontal, x, y)) {
+            for (int i = 0; i < ship.size; i++)
+                fieldPlayer.fillCell(x + (ship.isHorisontal ? i : 0), y + (!ship.isHorisontal ? i : 0), Cell.SHIP, true);
 
+            ship.count--;
+
+            updateShipPlacementTools();
+
+            boolean flag = true;
+            for (Ship s : shipList)
+                if (s.count > 0) {
+                    flag = false;
+                    break;
+                }
+            if (flag) gamePhase = 1;
+        }
+    }
+
+    @FXML
+    private void changeRotation() {
+        shipList.get(selectedShip).isHorisontal = !shipList.get(selectedShip).isHorisontal;
+
+        updateShipPlacementTools();
+    }
+
+    @FXML
+    private void changeSize() {
+        selectedShip++;
+        if (selectedShip >= 4) selectedShip = 0;
+
+        updateShipPlacementTools();
+    }
+
+    private void updateShipPlacementTools() {
+        textCount.setText("Кол-во: " + shipList.get(selectedShip).count);
+        textRotation.setText(shipList.get(selectedShip).isHorisontal ? "гориз." : "верт.");
+        textSize.setText("" + shipList.get(selectedShip).size);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        setShipList();
+
         addTiles(fieldPlayerView);
         addTiles(fieldAIView);
 
         fieldPlayer = new Field(fieldPlayerView);
         fieldAI = new Field(fieldAIView);
+
+        pane.getChildren().remove(textWin);
+        pane.getChildren().remove(buttonRestartGame);
+
+        updateShipPlacementTools();
     }
 
     private void addTiles(GridPane gridPane) {
@@ -197,6 +251,17 @@ public class Controller implements Initializable {
             this.y = y;
             this.isPlayer = isPlayer;
             setOnMouseClicked(e -> clickField(this.x, this.y, this.isPlayer));
+        }
+    }
+
+    @FXML
+    void restartGame() {
+        Stage stage = (Stage) buttonRestartGame.getScene().getWindow();
+        stage.close();
+        try {
+            new Main().start(new Stage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
